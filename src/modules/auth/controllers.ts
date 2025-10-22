@@ -3,18 +3,11 @@ import { eq } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import { db } from "@/db";
 import { rolesTable, usersTable } from "@/db/schema/user/schema";
-import type { Context } from "hono";
-import type { RegisterInput, LoginInput, ChangePasswordInput } from "./schemas";
+import { Context } from "hono";
 
-type Env = {
-  Variables: {
-    user?: any;
-  };
-};
-
-export const registerController = async (c: Context<Env, any, { in: { json: RegisterInput }; out: { json: any } }>) => {
+export const registerController = async (c: Context) => {
     try {
-        const { email, password, name } = c.req.valid('json');
+        const { email, password, name } = await c.req.json();
 
         const existingUser = await db
             .select()
@@ -56,9 +49,9 @@ export const registerController = async (c: Context<Env, any, { in: { json: Regi
     }
 };
 
-export const loginController = async (c: Context<Env, any, { in: { json: LoginInput }; out: { json: any } }>) => {
+export const loginController = async (c: Context) => {
     try {
-        const { email, password } = c.req.valid('json');
+        const { email, password } = await c.req.json();
 
         const [user] = await db
             .select()
@@ -95,9 +88,9 @@ export const loginController = async (c: Context<Env, any, { in: { json: LoginIn
     }
 };
 
-export const changePasswordController = async (c: Context<Env, any, { in: { json: ChangePasswordInput }; out: { json: any } }>) => {
+export const changePasswordController = async (c: Context) => {
     try {
-        const { currentPassword, newPassword } = c.req.valid('json');
+        const { currentPassword, newPassword } = await c.req.json();
         const userPayload = c.get("user");
 
         const [user] = await db
