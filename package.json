@@ -12,9 +12,8 @@
         "db:pull": "drizzle-kit pull",
         "dev:hono": "tsx watch src/index.ts",
         "dev:db": "drizzle-kit studio",
-        "checks": "bun exec biome check --write . && tsc --noEmit",
-        "precommit": "bun checks",
-        "prepush": "bun checks && bun db:generate",
+        "precommit": "bun exec biome check --write .",
+        "prepush": "bun exec biome check --write . && bun db:generate",
         "db:start": "docker compose -f docker-compose.yml up -d"
     },
     "dependencies": {

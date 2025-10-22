@@ -2,10 +2,17 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { sign } from "hono/jwt";
 import { db } from "@/db";
-import { usersTable } from "@/db/schema/user/schema";
-import { Context } from "hono";
+import { rolesTable, usersTable } from "@/db/schema/user/schema";
+import type { Context } from "hono";
+import type { RegisterInput, LoginInput, ChangePasswordInput } from "./schemas";
 
-export const registerController = async (c: Context) => {
+type Env = {
+  Variables: {
+    user?: any;
+  };
+};
+
+export const registerController = async (c: Context<Env, any, { in: { json: RegisterInput }; out: { json: any } }>) => {
     try {
         const { email, password, name } = c.req.valid('json');
 
@@ -21,9 +28,21 @@ export const registerController = async (c: Context) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const role = await db
+            .select()
+            .from(rolesTable)
+            .where(eq(rolesTable.name, "USER"))
+            .limit(1);
+
+        if (!role) {
+            return c.json({ message: "Role not found" }, 404);
+        }
+
+        const roleId = role[0].id;
+
         const [user] = await db
             .insert(usersTable)
-            .values({ email, password: hashedPassword, name })
+            .values({ email, password: hashedPassword, name, roleId: roleId })
             .returning({
                 id: usersTable.id,
                 email: usersTable.email,
@@ -37,7 +56,7 @@ export const registerController = async (c: Context) => {
     }
 };
 
-export const loginController = async (c: Context) => {
+export const loginController = async (c: Context<Env, any, { in: { json: LoginInput }; out: { json: any } }>) => {
     try {
         const { email, password } = c.req.valid('json');
 
@@ -73,5 +92,43 @@ export const loginController = async (c: Context) => {
         );
     } catch (_error) {
         return c.json({ message: "Login failed" }, 500);
+    }
+};
+
+export const changePasswordController = async (c: Context<Env, any, { in: { json: ChangePasswordInput }; out: { json: any } }>) => {
+    try {
+        const { currentPassword, newPassword } = c.req.valid('json');
+        const userPayload = c.get("user");
+
+        const [user] = await db
+            .select()
+            .from(usersTable)
+            .where(eq(usersTable.id, userPayload.id))
+            .limit(1);
+
+        if (!user) {
+            return c.json({ message: "User not found" }, 404);
+        }
+
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+            return c.json({ message: "Current password is incorrect" }, 401);
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+        await db
+            .update(usersTable)
+            .set({ 
+                password: hashedNewPassword, 
+                passwordChangedAt: new Date(),
+                updatedAt: new Date()
+            })
+            .where(eq(usersTable.id, userPayload.id));
+
+        return c.json({ message: "Password changed successfully" }, 200);
+    } catch (error) {
+        console.error("Change password error:", error);
+        return c.json({ message: "Change password failed" }, 500);
     }
 };
