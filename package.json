@@ -1,0 +1,43 @@
+{
+    "name": "my-app",
+    "type": "module",
+    "scripts": {
+        "dev": "concurrently --raw --kill-others bun:dev:*",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "drizzle-kit migrate",
+        "db:studio": "drizzle-kit studio",
+        "db:push": "drizzle-kit push",
+        "db:pull": "drizzle-kit pull",
+        "dev:hono": "tsx watch src/index.ts",
+        "dev:db": "drizzle-kit studio",
+        "checks": "bun exec biome check --write . && tsc --noEmit",
+        "precommit": "bun checks",
+        "prepush": "bun checks && bun db:generate",
+        "db:start": "docker compose -f docker-compose.yml up -d"
+    },
+    "dependencies": {
+        "@hono/node-server": "^1.19.5",
+        "@hono/standard-validator": "^0.1.5",
+        "@hono/zod-validator": "^0.7.4",
+        "bcryptjs": "^3.0.2",
+        "dotenv": "^17.2.3",
+        "drizzle-orm": "^0.44.6",
+        "hono": "^4.10.2",
+        "pg": "^8.16.3",
+        "ulid": "^3.0.1",
+        "zod": "^4.1.12",
+        "zod-validator": "^1.0.1"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "2.2.7",
+        "@types/bcryptjs": "^3.0.0",
+        "@types/node": "^20.11.17",
+        "@types/pg": "^8.15.5",
+        "concurrently": "^9.2.1",
+        "drizzle-kit": "^0.31.5",
+        "tsx": "^4.20.6",
+        "typescript": "^5.8.3"
+    }
+}

@@ -1,0 +1,95 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.2.7/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": true
+    },
+    "overrides": [
+        {
+            "linter": {
+                "rules": {
+                    "complexity": {
+                        "noForEach": "off"
+                    },
+                    "suspicious": {
+                        "noExplicitAny": "off",
+                        "noEmptyBlockStatements": "off"
+                    },
+                    "performance": {
+                        "useTopLevelRegex": "off"
+                    },
+                    "style": {
+                        "useCollapsedElseIf": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["**/*.css"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noUnknownAtRules": "off"
+                    }
+                }
+            }
+        }
+    ],
+    "formatter": {
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 80
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "double",
+            "trailingCommas": "es5",
+            "semicolons": "always",
+            "bracketSpacing": true,
+            "arrowParentheses": "always"
+        }
+    },
+    "linter": {
+        "rules": {
+            "a11y": {
+                "useSemanticElements": "off"
+            },
+            "complexity": {
+                "noExcessiveCognitiveComplexity": "off"
+            },
+            "performance": {
+                "noNamespaceImport": "off",
+                "noImgElement": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "error",
+                "noConsole": {
+                    "level": "error",
+                    "options": {
+                        "allow": ["warn", "error", "info", "debug", "trace"]
+                    }
+                },
+                "noArrayIndexKey": "off"
+            },
+            "nursery": {
+                "noShadow": "off"
+            },
+            "style": {
+                "noParameterAssign": "error",
+                "useAsConstAssertion": "error",
+                "useDefaultParameterLast": "error",
+                "useEnumInitializers": "error",
+                "useSelfClosingElements": "error",
+                "useSingleVarDeclarator": "error",
+                "noUnusedTemplateLiteral": "error",
+                "useNumberNamespace": "error",
+                "noInferrableTypes": "error",
+                "noUselessElse": "error"
+            }
+        }
+    }
+}
