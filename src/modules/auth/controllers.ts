@@ -7,7 +7,7 @@ import { Context } from "hono";
 
 export const registerController = async (c: Context) => {
     try {
-        const { email, password, name } = await c.req.json();
+        const { email, password, name, roleName } = await c.req.json();
 
         const existingUser = await db
             .select()
@@ -21,13 +21,16 @@ export const registerController = async (c: Context) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Use "USER" as default role if no roleName is provided
+        const targetRoleName = roleName || "USER";
+
         const role = await db
             .select()
             .from(rolesTable)
-            .where(eq(rolesTable.name, "USER"))
+            .where(eq(rolesTable.name, targetRoleName))
             .limit(1);
 
-        if (!role) {
+        if (role.length === 0) {
             return c.json({ message: "Role not found" }, 404);
         }
 

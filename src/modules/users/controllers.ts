@@ -73,7 +73,7 @@ export const getRoleController = async (c: Context) => {
   try {
     const { id } = c.req.param();
     const role = await db.select().from(rolesTable).where(eq(rolesTable.id, id));
-    if (!role) {
+    if (!role || role.length === 0) {
       return c.json({ message: "Role not found" }, 404);
     }
     return c.json({
