@@ -4,6 +4,13 @@ import { sign } from "hono/jwt";
 import { db } from "@/db";
 import { rolesTable, usersTable } from "@/db/schema/user/schema";
 import { Context } from "hono";
+import {
+    ApiKeyNameConflictError,
+    ApiKeyNotFoundError,
+    createApiKeyForUser,
+    deleteApiKeyForUser,
+    listApiKeysForUser,
+} from "./service";
 
 export const registerController = async (c: Context) => {
     try {
@@ -21,7 +28,6 @@ export const registerController = async (c: Context) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Use "USER" as default role if no roleName is provided
         const targetRoleName = roleName || "USER";
 
         const role = await db
@@ -126,5 +132,79 @@ export const changePasswordController = async (c: Context) => {
     } catch (error) {
         console.error("Change password error:", error);
         return c.json({ message: "Change password failed" }, 500);
+    }
+};
+
+export const createApiKeyController = async (c: Context) => {
+    try {
+        const { name } = await c.req.json();
+        const userPayload = c.get("user");
+
+        if (!userPayload?.id) {
+            return c.json({ message: "Unauthorized" }, 401);
+        }
+
+        const { apiKey, record } = await createApiKeyForUser(userPayload.id, name);
+
+        return c.json(
+            {
+                message: "API key created successfully",
+                apiKey: {
+                    id: record.id,
+                    name: record.name,
+                    createdAt: record.createdAt,
+                    updatedAt: record.updatedAt,
+                    value: apiKey,
+                },
+            },
+            201
+        );
+    } catch (error) {
+        if (error instanceof ApiKeyNameConflictError) {
+            return c.json({ message: error.message }, 409);
+        }
+        return c.json({ message: "Create API key failed" }, 500);
+    }
+};
+
+export const listApiKeysController = async (c: Context) => {
+    try {
+        const userPayload = c.get("user");
+
+        if (!userPayload?.id) {
+            return c.json({ message: "Unauthorized" }, 401);
+        }
+
+        const apiKeys = await listApiKeysForUser(userPayload.id);
+
+        return c.json(
+            {
+                message: "API keys fetched successfully",
+                apiKeys,
+            },
+            200
+        );
+    } catch (error) {
+        return c.json({ message: "List API keys failed" }, 500);
+    }
+};
+
+export const deleteApiKeyController = async (c: Context) => {
+    try {
+        const { apiKeyId } = await c.req.param()
+        const userPayload = c.get("user");
+
+        if (!userPayload?.id) {
+            return c.json({ message: "Unauthorized" }, 401);
+        }
+
+        await deleteApiKeyForUser(userPayload.id, apiKeyId);
+
+        return c.json({ message: "API key deleted successfully" }, 200);
+    } catch (error) {
+        if (error instanceof ApiKeyNotFoundError) {
+            return c.json({ message: error.message }, 404);
+        }
+        return c.json({ message: "Delete API key failed" }, 500);
     }
 };

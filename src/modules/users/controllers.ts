@@ -20,6 +20,7 @@ export const getMyUserController = async (c: Context) => {
           canPostLogin: rolesTable.canPostLogin,
           canGetMyUser: rolesTable.canGetMyUser,
           canGetUsers: rolesTable.canGetUsers,
+          canPostProducts: rolesTable.canPostProducts,
         }
       })
       .from(usersTable)
@@ -36,7 +37,6 @@ export const getMyUserController = async (c: Context) => {
       user,
     });
   } catch (error) {
-    console.error("Get my user error:", error);
     return c.json({ message: "Failed to fetch user" }, 500);
   }
 };
@@ -50,7 +50,6 @@ export const listUserController = async (c: Context) => {
       listUser,
     });
   } catch (error) {
-    console.error("List Users error:", error);
     return c.json({ message: "Failed to list users" }, 500);
   }
 };
@@ -64,7 +63,6 @@ export const listRoleController = async (c: Context) => {
       listRole,
     });
   } catch (error) {
-    console.error("List Role error:", error);
     return c.json({ message: "Failed to list role" }, 500);
   }
 };
@@ -81,7 +79,6 @@ export const getRoleController = async (c: Context) => {
       role,
     });
   } catch (error) {
-    console.error("Get Role error:", error);
     return c.json({ message: "Failed to get role" }, 500);
   }
 };
@@ -95,6 +92,7 @@ export const createRoleController = async (c: Context) => {
       canPostLogin: rolesTable.canPostLogin,
       canGetMyUser: rolesTable.canGetMyUser,
       canGetUsers: rolesTable.canGetUsers,
+      canPostProducts: rolesTable.canPostProducts,
     })
     if (!role) {
       return c.json({ message: "Role not created" }, 404);
@@ -104,7 +102,6 @@ export const createRoleController = async (c: Context) => {
       role,
     });
   } catch (error) {
-    console.error("Create Role error:", error);
     return c.json({ message: "Failed to create role" }, 500);
   }
 };
@@ -119,7 +116,6 @@ export const updateRoleController = async (c: Context) => {
       role,
     });
   } catch (error) {
-    console.error("Update Role error:", error);
     return c.json({ message: "Failed to update role" }, 500);
   }
 };
@@ -133,7 +129,6 @@ export const deleteRoleController = async (c: Context) => {
       role,
     });
   } catch (error) {
-    console.error("Delete Role error:", error);
     return c.json({ message: "Failed to delete role" }, 500);
   }
 };

@@ -1,11 +1,11 @@
 import type { Context, Next } from 'hono';
 
-type Permission = 'canPostLogin' | 'canGetMyUser' | 'canGetUsers';
+type Permission = 'canPostLogin' | 'canGetMyUser' | 'canGetUsers' | 'canPostProducts' | 'canPostProductsWithImage' | 'canGetBestsellers';
 
 export const requirePermission = (permission: Permission) => {
   return async (c: Context, next: Next) => {
     const user = c.get('user');
-    
+
     if (!user) {
       return c.json({ message: 'User not found' }, 401);
     }
@@ -21,7 +21,7 @@ export const requirePermission = (permission: Permission) => {
 export const requireAnyPermission = (permissions: Permission[]) => {
   return async (c: Context, next: Next) => {
     const user = c.get('user');
-    
+
     if (!user) {
       return c.json({ message: 'User not found' }, 401);
     }
@@ -31,7 +31,7 @@ export const requireAnyPermission = (permissions: Permission[]) => {
     }
 
     const hasPermission = permissions.some(permission => user.role[permission]);
-    
+
     if (!hasPermission) {
       return c.json({ message: `Access denied. Required one of: ${permissions.join(', ')}` }, 403);
     }

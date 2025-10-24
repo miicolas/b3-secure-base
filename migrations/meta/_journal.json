@@ -15,6 +15,34 @@
       "when": 1761161062624,
       "tag": "0001_true_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761295824112,
+      "tag": "0002_dizzy_slapstick",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761295862385,
+      "tag": "0003_daily_vulture",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1761308454174,
+      "tag": "0004_thick_spirit",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1761316445177,
+      "tag": "0005_mixed_maximus",
+      "breakpoints": true
     }
   ]
 }

@@ -17,6 +17,16 @@ export const changePasswordSchema = z.object({
     newPassword: z.string().min(8),
 });
 
+export const createApiKeySchema = z.object({
+    name: z.string().trim().min(3).max(64),
+});
+
+export const apiKeyParamSchema = z.object({
+    apiKeyId: z.string().min(1),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type CreateApiKeyInput = z.infer<typeof createApiKeySchema>;
+export type ApiKeyParamInput = z.infer<typeof apiKeyParamSchema>;

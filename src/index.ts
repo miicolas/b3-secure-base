@@ -1,9 +1,9 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import type { JwtVariables } from "hono/jwt";
-import { jwt } from "hono/jwt";
 import { authRoutes } from "./modules/auth/routes";
 import { userRoutes } from "./modules/users/routes";
+import { productsRoutes } from "./modules/products/routes";
+import { webhooksRoutes } from "./modules/webhooks/routes";
 
 
 const app = new Hono();
@@ -12,12 +12,21 @@ app.get("/", (c) => {
     return c.text("Hello Hono!");
 });
 
-app.get("/health", (c) => {
-    return c.json({ message: "OK", timestamp: new Date().toISOString() });
-});
+const createApiRoutes = () => {
+    const apiRoutes = new Hono();
 
-app.route("/auth", authRoutes());
-app.route("/users", userRoutes());
+    apiRoutes.get("/health", (c) => {
+        return c.json({ message: "OK", timestamp: new Date().toISOString() });
+    });
+    apiRoutes.route("/auth", authRoutes());
+    apiRoutes.route("/users", userRoutes());
+    apiRoutes.route("/products", productsRoutes());
+    apiRoutes.route("/webhooks", webhooksRoutes());
+
+    return apiRoutes;
+};
+
+app.route("/api/v1", createApiRoutes());
 
 
 
@@ -27,7 +36,6 @@ serve(
         port: 3000,
     },
     (info) => {
-        // biome-ignore lint/suspicious/noConsole: Server startup message
         console.log(`Server is running on http://localhost:${info.port}`);
     }
 );
