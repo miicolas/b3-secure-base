@@ -43,6 +43,13 @@
       "when": 1761316445177,
       "tag": "0005_mixed_maximus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1761405447263,
+      "tag": "0006_small_landau",
+      "breakpoints": true
     }
   ]
 }

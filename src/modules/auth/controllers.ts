@@ -82,8 +82,13 @@ export const loginController = async (c: Context) => {
             return c.json({ message: "Server configuration error" }, 500);
         }
 
+        const now = Math.floor(Date.now() / 1000);
         const token = await sign(
-            { sub: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+            {
+                sub: user.id,
+                iat: now,
+                exp: now + 60 * 60
+            },
             process.env.JWT_SECRET,
             "HS256"
         );
